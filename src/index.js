@@ -1,14 +1,14 @@
 import dotenv from "dotenv";
-
+dotenv.config({
+  path: "./.env",
+});
 import mongoose from "mongoose";
 
 
 import { DB_NAME } from "./constants.js";
 import connectDB from "./db/index.js";
 import { app } from "./app.js";
-dotenv.config({
-  path: "./.env",
-});
+
 connectDB()
   .then(() => {
     app.listen(process.env.PORT || 8000, () => {
@@ -17,7 +17,13 @@ connectDB()
   })
   .catch((error) => {
     console.log("ERROR", error);
+    // Start server even if DB fails
+    app.listen(process.env.PORT || 8000, () => {
+      console.log(`server is running at port ${process.env.PORT || 8000} (DB connection failed)`);
+    });
   });
+  dotenv.config({ path: "./.env" })
+console.log("URI:", process.env.MONGODB_URI) // ← check what's loaded
 
 /*
 const app  = express()
